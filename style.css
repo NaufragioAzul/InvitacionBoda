@@ -1,61 +1,225 @@
+/* Configuración General */
 body {
-    background-color: #f9f6f0;
-    font-family: 'Georgia', serif;
+    background-color: #f4eee1; /* Fondo cálido crema */
+    background-image: radial-gradient(#dfd4be 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Montserrat', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    padding: 20px 0;
 }
 
+/* Tarjeta Principal */
 .invitation-card {
-    background: white;
-    max-width: 400px;
+    background: #ffffff;
+    max-width: 450px;
     width: 90%;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(170, 124, 17, 0.15);
     overflow: hidden;
     text-align: center;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Contenedor Foto de Portada */
+.photo-container {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
 }
 
 .wedding-photo {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 
+/* Efecto elegante sobre la foto */
+.gold-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 60%, rgba(255,255,255,0.9));
+}
+
+/* Detalles del Evento */
 .details {
-    padding: 30px 20px;
-    color: #4a4a4a;
+    padding: 20px 30px;
+    color: #333333;
+}
+
+.anniversary-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #AA7C11;
+    margin-bottom: 5px;
+    font-weight: 600;
 }
 
 h1 {
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #b8977e;
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    color: #1a1a1a;
+    margin: 5px 0;
 }
 
-.divider {
-    width: 50%;
-    border: 0;
-    border-top: 1px solid #b8977e;
+.couple-names {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 3.2rem;
+    color: #AA7C11; /* Oro Oscuro */
+    margin: 15px 0;
+    font-weight: 400;
+}
+
+/* Divisor Decorativo Dorado */
+.decorative-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 20px auto;
+    width: 70%;
+}
+
+.decorative-divider .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #D4AF37, transparent);
+}
+
+.decorative-divider .diamond {
+    color: #D4AF37;
+    margin: 0 10px;
+    font-size: 0.8rem;
+}
+
+.phrase {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Cuadrícula de Información */
+.info-grid {
+    background: #fdfbf7;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    font-size: 0.95rem;
+}
+
+.info-item .icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.info-item p {
+    margin: 0;
+    font-weight: 400;
+}
+
+.date { font-weight: 600 !important; color: #AA7C11; }
+
+/* Sección Galería de Fotos */
+.gallery-section h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.photo-gallery {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 0 30px 25px 30px;
+}
+
+.gallery-item {
+    flex: 1;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border: 2px solid #fff;
+    outline: 1px solid rgba(212, 175, 55, 0.3);
+    height: 140px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-item span {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 4px 0;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Sección RSVP / Botón */
+.rsvp {
+    background: linear-gradient(to bottom, #ffffff, #fdfbf7);
+    padding: 10px 30px 30px 30px;
+}
+
+.rsvp h3 {
+    font-family: 'Cinzel', serif;
+    margin-bottom: 5px;
+    color: #1a1a1a;
+}
+
+.rsvp p {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
 
 #rsvp-btn {
-    background-color: #b8977e;
-    color: white;
+    background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA7C11);
+    color: #1a1a1a;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
     border: none;
-    padding: 12px 25px;
-    font-size: 1rem;
-    border-radius: 25px;
+    padding: 14px 35px;
+    font-size: 0.95rem;
+    border-radius: 30px;
     cursor: pointer;
-    margin-bottom: 30px;
-    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(170, 124, 17, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 #rsvp-btn:hover {
-    background-color: #9e7f68;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(170, 124, 17, 0.4);
 }
-

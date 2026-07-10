@@ -3,34 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestra Boda</title>
+    <title>Nuestra Boda de Oro - Francisca & Felipe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="invitation-card">
-        <!-- Foto de portada -->
-        <div class="photo-container">
-            <img src="tu-foto-de-boda.jpg" alt="Nosotros" class="wedding-photo">
+        <div class="photo-container main-photo">
+            <img src="foto-portada.jpg" alt="Francisca y Felipe" class="wedding-photo">
+            <div class="gold-overlay"></div>
         </div>
 
-        <!-- Información del evento -->
         <section class="details">
-            <h1>¡Nos Casamos!</h1>
-            <h2>Ana & Carlos</h2>
-            <hr class="divider">
-            <p class="date">Sábado, 17 de Octubre de 2026</p>
-            <p class="time">18:00 Horas</p>
-            <p class="place">Quinta Las Flores, Ciudad de México</p>
+            <p class="anniversary-tag">50 Aniversario</p>
+            <h1>Nuestra Boda de Oro</h1>
+            <h2 class="couple-names">Francisca & Felipe</h2>
+            
+            <div class="decorative-divider">
+                <span class="line"></span>
+                <span class="diamond">♦</span>
+                <span class="line"></span>
+            </div>
+
+            <p class="phrase">"Cincuenta años de amor, complicidad y una hermosa vida juntos. Hoy celebramos el inicio de un nuevo capítulo."</p>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="icon">📅</span>
+                    <p class="date">Sábado, 1 de Agosto del 2026</p>
+                </div>
+                <div class="info-item">
+                    <span class="icon">⏰</span>
+                    <p class="time">11:00 Horas</p>
+                </div>
+                <div class="info-item">
+                    <span class="icon">📍</span>
+                    <p class="place">Iglesia San Pedro Nolasco</p>
+                </div>
+            </div>
         </section>
 
-        <!-- Confirmación de asistencia -->
+        <section class="gallery-section">
+            <h3>Nuestra Historia</h3>
+            <div class="photo-gallery">
+                <div class="gallery-item">
+                    <img src="foto-antigua.jpg" alt="Boda 1976">
+                    <span>1976</span>
+                </div>
+                <div class="gallery-item">
+                    <img src="foto-actual.jpg" alt="Actualidad">
+                    <span>2026</span>
+                </div>
+            </div>
+        </section>
+
         <section class="rsvp">
-            <h3>Confirmar Asistencia</h3>
-            <button id="rsvp-btn" onclick="confirmarAsistencia()">¡Sí, asistiré!</button>
+            <h3>¿Nos acompañas?</h3>
+            <p>Tu presencia hará este día aún más especial.</p>
+            <button id="rsvp-btn" onclick="confirmarAsistencia()">✨ ¡Sí, asistiré! ✨</button>
         </section>
     </main>
 
     <script src="script.js"></script>
 </body>
 </html>
-
