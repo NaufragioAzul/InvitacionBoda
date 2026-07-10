@@ -1,8 +1,8 @@
 /* Configuración General */
 body {
-    background-color: #f4eee1; /* Fondo cálido crema */
-    background-image: radial-gradient(#dfd4be 1px, transparent 1px);
-    background-size: 20px 20px;
+    background-color: #0d0d0d; /* Fondo negro de gala */
+    background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
     font-family: 'Montserrat', sans-serif;
     display: flex;
     justify-content: center;
@@ -10,25 +10,152 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 20px 0;
+    overflow-x: hidden;
 }
 
-/* Tarjeta Principal */
+/* === ESTILOS DEL SOBRE INTERACTIVO === */
+.envelope-wrapper {
+    width: 90%;
+    max-width: 400px;
+    height: 280px;
+    position: relative;
+    cursor: pointer;
+    perspective: 1000px;
+    transition: transform 0.5s ease;
+}
+
+.envelope-wrapper:hover {
+    transform: scale(1.03);
+}
+
+.envelope {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Sello de Oro */
+.seal {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA7C11);
+    border-radius: 50%;
+    position: absolute;
+    top: 40%;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.seal-inner {
+    width: 48px;
+    height: 48px;
+    border: 2px dashed #1a1a1a;
+    border-radius: 50%;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+.envelope-text {
+    position: absolute;
+    bottom: 25px;
+    text-align: center;
+    width: 100%;
+    z-index: 4;
+}
+
+.envelope-text .serif-text {
+    font-family: 'Pinyon Script', cursive;
+    color: #FCF6BA;
+    font-size: 2.2rem;
+    margin: 0;
+}
+
+.click-hint {
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: block;
+    margin-top: 5px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* Transición de Ocultar sobre / Mostrar Carta */
+.hidden {
+    display: none !important;
+}
+
+.fade-out {
+    animation: fadeOutUp 0.8s forwards;
+}
+
+@keyframes fadeOutUp {
+    to {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.8);
+        display: none;
+    }
+}
+
+/* === DISEÑO MEJORADO DE LA INVITACIÓN === */
 .invitation-card {
     background: #ffffff;
-    max-width: 450px;
+    max-width: 460px;
     width: 90%;
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(170, 124, 17, 0.15);
+    box-shadow: 0 15px 45px rgba(212, 175, 55, 0.25);
     overflow: hidden;
     text-align: center;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 3px solid #D4AF37;
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
-/* Contenedor Foto de Portada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.music-indicator {
+    background: #1a1a1a;
+    color: #FCF6BA;
+    font-size: 0.8rem;
+    padding: 8px;
+    letter-spacing: 1px;
+}
+
+/* Fotos */
 .photo-container {
     position: relative;
     width: 100%;
-    height: 280px;
+    height: 290px;
     overflow: hidden;
 }
 
@@ -39,187 +166,182 @@ body {
     display: block;
 }
 
-/* Efecto elegante sobre la foto */
 .gold-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, transparent 60%, rgba(255,255,255,0.9));
+    background: linear-gradient(to bottom, transparent 50%, rgba(255,255,255,1));
 }
 
-/* Detalles del Evento */
+/* Detalles */
 .details {
-    padding: 20px 30px;
-    color: #333333;
+    padding: 10px 30px 25px 30px;
+    color: #222222;
 }
 
 .anniversary-tag {
     font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     color: #AA7C11;
     margin-bottom: 5px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 h1 {
     font-family: 'Cinzel', serif;
-    font-size: 1.6rem;
-    color: #1a1a1a;
+    font-size: 1.8rem;
+    color: #111;
     margin: 5px 0;
 }
 
 .couple-names {
     font-family: 'Pinyon Script', cursive;
-    font-size: 3.2rem;
-    color: #AA7C11; /* Oro Oscuro */
-    margin: 15px 0;
-    font-weight: 400;
+    font-size: 3.6rem;
+    color: #AA7C11; 
+    margin: 10px 0;
 }
 
-/* Divisor Decorativo Dorado */
 .decorative-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px auto;
-    width: 70%;
+    margin: 15px auto;
+    width: 75%;
 }
 
 .decorative-divider .line {
     flex: 1;
-    height: 1px;
+    height: 2px;
     background: linear-gradient(to right, transparent, #D4AF37, transparent);
 }
 
 .decorative-divider .diamond {
     color: #D4AF37;
     margin: 0 10px;
-    font-size: 0.8rem;
 }
 
 .phrase {
     font-style: italic;
-    font-size: 0.9rem;
-    color: #666;
+    font-size: 0.95rem;
+    color: #555;
     line-height: 1.6;
-    margin-bottom: 25px;
 }
 
-/* Cuadrícula de Información */
+/* Grid Info */
 .info-grid {
-    background: #fdfbf7;
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: #fffdf9;
+    border: 2px double rgba(212, 175, 55, 0.4);
     border-radius: 12px;
     padding: 15px;
-    margin-bottom: 25px;
+    margin-top: 20px;
 }
 
 .info-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px 0;
-    font-size: 0.95rem;
+    margin: 12px 0;
+    font-size: 1rem;
 }
 
-.info-item .icon {
-    margin-right: 10px;
-    font-size: 1.2rem;
+.info-item .icon { margin-right: 12px; font-size: 1.3rem;}
+.date { font-weight: 600; color: #AA7C11; }
+
+/* Botón Maps */
+.maps-container { margin: 20px 0 10px 0; }
+.maps-btn {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #1a1a1a;
+    color: #FCF6BA;
+    border: 1px solid #D4AF37;
+    padding: 12px 22px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+.maps-btn:hover {
+    background: linear-gradient(135deg, #BF953F, #AA7C11);
+    color: #fff;
 }
 
-.info-item p {
-    margin: 0;
-    font-weight: 400;
-}
-
-.date { font-weight: 600 !important; color: #AA7C11; }
-
-/* Sección Galería de Fotos */
+/* Mosaico Vertical de Fotos Premium */
 .gallery-section h3 {
     font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: #1a1a1a;
+    font-size: 1.2rem;
+    color: #111;
     letter-spacing: 1px;
-    margin-bottom: 15px;
+    margin: 30px 0 20px 0;
 }
 
-.photo-gallery {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+.photo-mosaic-vertical {
     padding: 0 30px 25px 30px;
 }
 
-.gallery-item {
-    flex: 1;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    border: 2px solid #fff;
-    outline: 1px solid rgba(212, 175, 55, 0.3);
-    height: 140px;
+.mosaic-item {
+    margin-bottom: 25px;
+    background-color: #ffffff;
+    border: 2px solid #D4AF37;
+    padding: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    transform: rotate(-1deg);
+    transition: transform 0.3s;
 }
 
-.gallery-item img {
+.mosaic-item:nth-child(even) {
+    transform: rotate(1deg);
+}
+
+.mosaic-item:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.mosaic-item img {
     width: 100%;
-    height: 100%;
+    height: auto;
+    display: block;
     object-fit: cover;
+    max-height: 280px;
 }
 
-.gallery-item span {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    font-size: 0.8rem;
-    padding: 4px 0;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-/* Sección RSVP / Botón */
-.rsvp {
-    background: linear-gradient(to bottom, #ffffff, #fdfbf7);
-    padding: 10px 30px 30px 30px;
-}
-
-.rsvp h3 {
-    font-family: 'Cinzel', serif;
-    margin-bottom: 5px;
-    color: #1a1a1a;
-}
-
-.rsvp p {
+.mosaic-caption {
     font-size: 0.85rem;
-    color: #666;
-    margin-top: 0;
-    margin-bottom: 20px;
+    color: #444;
+    margin-top: 10px;
+    font-style: italic;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }
+
+/* RSVP */
+.rsvp {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 30px;
+}
+.rsvp h3 { font-family: 'Cinzel', serif; color: #FCF6BA; margin: 0 0 10px 0; }
+.rsvp p { color: #ccc; font-size: 0.9rem; margin-bottom: 25px; }
 
 #rsvp-btn {
     background: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA7C11);
     color: #1a1a1a;
-    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     border: none;
-    padding: 14px 35px;
-    font-size: 0.95rem;
+    padding: 16px 40px;
+    font-size: 1rem;
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(170, 124, 17, 0.3);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s;
 }
 
 #rsvp-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(170, 124, 17, 0.4);
+    transform: scale(1.05);
 }
