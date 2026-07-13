@@ -1,359 +1,249 @@
-/* ==========================================================================
-   BODAS DE ORO — Carmen & Alberto
-   Vanilla JS modular. Sin dependencias externas.
-   ========================================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- LÓGICA DE APERTURA DEL SOBRE ---
+    const envelopeWrapper = document.getElementById("envelopeWrapper");
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const mainContent = document.getElementById("mainContent");
 
-document.addEventListener('DOMContentLoaded', () => {
-  initImageFallbacks();
-  initEnvelope();
-  initParticles();
-  initScrollReveal();
-  initCarousel();
-  initMusicPlayer();
-  initRSVP();
-});
-
-/* --------------------------------------------------------------------------
-   0. FALLBACK DE IMÁGENES
-   Si una imagen de Unsplash no carga (bloqueo de red, id caducado, etc.)
-   se reemplaza automáticamente por el placeholder definido en data-fallback.
-   -------------------------------------------------------------------------- */
-function initImageFallbacks() {
-  document.querySelectorAll('img[data-fallback]').forEach((img) => {
-    img.addEventListener('error', () => {
-      if (img.src !== img.dataset.fallback) {
-        img.src = img.dataset.fallback;
-      }
-    }, { once: true });
-  });
-}
-
-/* --------------------------------------------------------------------------
-   1. SOBRE 3D — apertura y revelado de la invitación
-   -------------------------------------------------------------------------- */
-function initEnvelope() {
-  const envelope = document.getElementById('envelope');
-  const welcomeScreen = document.getElementById('welcome-screen');
-  const invitation = document.getElementById('invitation');
-  const musicPlayer = document.getElementById('music-player');
-  const tapHint = document.getElementById('tap-hint');
-
-  if (!envelope) return;
-
-  let opened = false;
-
-  envelope.addEventListener('click', () => {
-    if (opened) return;
-    opened = true;
-
-    envelope.classList.add('is-open');
-    tapHint.style.opacity = '0';
-
-    // 1. La solapa gira en 3D y la carta sale (definido en CSS, ~1.9s).
-    // 2. Tras ese tiempo, el sobre completo se desvanece hacia abajo.
-    setTimeout(() => {
-      welcomeScreen.classList.add('is-hidden');
-    }, 1500);
-
-    // 3. Se revela la invitación con un efecto de aparición escalonado.
-    setTimeout(() => {
-      welcomeScreen.setAttribute('aria-hidden', 'true');
-      invitation.removeAttribute('aria-hidden');
-      invitation.style.display = 'block';
-      document.body.style.overflowY = 'auto';
-
-      // arranca el reproductor y la primera tanda de revelado visible
-      musicPlayer.removeAttribute('aria-hidden');
-      revealVisibleNow();
-      attemptAutoplay();
-    }, 2450);
-  });
-
-  // Antes de abrir, evita el scroll del body para mantener el foco en el sobre.
-  document.body.style.overflowY = 'hidden';
-}
-
-/* --------------------------------------------------------------------------
-   2. PARTÍCULAS DORADAS FLOTANTES (canvas)
-   -------------------------------------------------------------------------- */
-function initParticles() {
-  const canvas = document.getElementById('particle-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  let width, height, particles;
-  const PARTICLE_COUNT = window.innerWidth < 700 ? 38 : 70;
-
-  function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  }
-
-  function makeParticle() {
-    return {
-      x: Math.random() * width,
-      y: Math.random() * height,
-      r: Math.random() * 1.8 + 0.4,
-      speedY: Math.random() * 0.35 + 0.08,
-      speedX: (Math.random() - 0.5) * 0.25,
-      alpha: Math.random() * 0.6 + 0.2,
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
-      twinklePhase: Math.random() * Math.PI * 2,
-    };
-  }
-
-  function init() {
-    resize();
-    particles = Array.from({ length: PARTICLE_COUNT }, makeParticle);
-  }
-
-  function tick(t) {
-    ctx.clearRect(0, 0, width, height);
-    particles.forEach((p) => {
-      p.y -= p.speedY;
-      p.x += p.speedX;
-      p.twinklePhase += p.twinkleSpeed;
-
-      if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
-      if (p.x < -10) p.x = width + 10;
-      if (p.x > width + 10) p.x = -10;
-
-      const twinkle = (Math.sin(p.twinklePhase) + 1) / 2;
-      const alpha = p.alpha * (0.4 + twinkle * 0.6);
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(232, 199, 102, ${alpha.toFixed(3)})`;
-      ctx.shadowColor = 'rgba(212, 175, 55, 0.8)';
-      ctx.shadowBlur = 4;
-      ctx.fill();
+    envelopeWrapper.addEventListener("click", () => {
+        welcomeScreen.classList.add("open");
+        
+        // Retraso controlado para coordinar salida de portada y entrada de contenido
+        setTimeout(() => {
+            welcomeScreen.classList.add("exit");
+            mainContent.classList.remove("hidden");
+            
+            // Forzar el redibujado para que se procese la animación de opacidad suave
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                initScrollReveal();
+            }, 50);
+            
+            // Inicializar autoplay de la música al dar click/interacción (políticas del navegador)
+            playTrack();
+        }, 1200);
     });
-    requestAnimationFrame(tick);
-  }
 
-  window.addEventListener('resize', resize);
-  init();
-  requestAnimationFrame(tick);
-}
+    // --- CANVAS DE PARTÍCULAS (POLVO DE ESTRELLAS DORADO) ---
+    const canvas = document.getElementById("particlesCanvas");
+    const ctx = canvas.getContext("2d");
 
-/* --------------------------------------------------------------------------
-   3. SCROLL REVEAL — aparición escalonada de secciones al hacer scroll
-   -------------------------------------------------------------------------- */
-let scrollObserver;
+    let particlesArray = [];
+    const numberOfParticles = 60;
 
-function initScrollReveal() {
-  const items = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) {
-    items.forEach((el) => el.classList.add('is-visible'));
-    return;
-  }
-
-  scrollObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          const delay = (i % 4) * 90;
-          setTimeout(() => entry.target.classList.add('is-visible'), delay);
-          scrollObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
-  );
-
-  items.forEach((el) => scrollObserver.observe(el));
-}
-
-// Revela de inmediato lo que ya está en pantalla justo tras abrir el sobre,
-// para que la cabecera de la invitación no aparezca "vacía".
-function revealVisibleNow() {
-  document.querySelectorAll('.reveal').forEach((el) => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) {
-      el.classList.add('is-visible');
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
-  });
-}
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
-/* --------------------------------------------------------------------------
-   4. CARRUSEL DE FOTOGRAFÍAS
-   -------------------------------------------------------------------------- */
-function initCarousel() {
-  const track = document.getElementById('carousel-track');
-  const dotsWrap = document.getElementById('carousel-dots');
-  const prevBtn = document.getElementById('carousel-prev');
-  const nextBtn = document.getElementById('carousel-next');
-  const carousel = document.getElementById('carousel');
-  if (!track) return;
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2.5 + 0.5;
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.speedY = Math.random() * -0.5 - 0.2; // Movimiento ascendente sutil
+            this.opacity = Math.random() * 0.6 + 0.2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
 
-  const slides = Array.from(track.children);
-  let index = 0;
-  let autoplayId = null;
-  const AUTOPLAY_MS = 4000;
+            // Reposicionamiento cíclico si salen de pantalla
+            if (this.y < 0) {
+                this.y = canvas.height;
+                this.x = Math.random() * canvas.width;
+            }
+            if (this.x < 0 || this.x > canvas.width) {
+                this.speedX = -this.speedX;
+            }
+        }
+        draw() {
+            ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 
-  // construye los indicadores (dots)
-  slides.forEach((_, i) => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.className = 'carousel__dot';
-    dot.setAttribute('role', 'tab');
-    dot.setAttribute('aria-label', `Ir a la fotografía ${i + 1}`);
-    dot.addEventListener('click', () => goTo(i, true));
-    dotsWrap.appendChild(dot);
-  });
-  const dots = Array.from(dotsWrap.children);
+    function initParticles() {
+        for (let i = 0; i < numberOfParticles; i++) {
+            particlesArray.push(new Particle());
+        }
+    }
 
-  function render() {
-    track.style.transform = `translateX(-${index * 100}%)`;
-    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
-  }
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particlesArray.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    
+    initParticles();
+    animateParticles();
 
-  function goTo(i, userTriggered) {
-    index = (i + slides.length) % slides.length;
-    render();
-    if (userTriggered) restartAutoplay();
-  }
+// --- REPRODUCTOR DE AUDIO AVANZADO CON VOZ DE BIENVENIDA ---
+    const tracks = [
+        { 
+            name: "Invitación de los Hijos", 
+            src: "musica-invitacion.mp3", // <-- Coloca aquí la ruta de tu archivo de voz
+            isVoice: true 
+        },
+        { 
+            name: "Vals de Aniversario", 
+            src: "musica-bodas-de-oro-1.mp3",
+            isVoice: false
+        }, 
+        { 
+            name: "Amor Eterno Sinfónico", 
+            src: "musica-bodas-de-oro.mp3",
+            isVoice: false
+        }
+    ];
 
-  function next(userTriggered) { goTo(index + 1, userTriggered); }
-  function prev(userTriggered) { goTo(index - 1, userTriggered); }
+    let currentTrackIndex = 0;
+    const audio = new Audio(tracks[currentTrackIndex].src);
+    audio.loop = false;
 
-  function startAutoplay() {
-    stopAutoplay();
-    autoplayId = setInterval(() => next(false), AUTOPLAY_MS);
-  }
-  function stopAutoplay() {
-    if (autoplayId) clearInterval(autoplayId);
-  }
-  function restartAutoplay() {
-    startAutoplay();
-  }
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const playIcon = document.getElementById("playIcon");
+    const pauseIcon = document.getElementById("pauseIcon");
+    const trackNameDisplay = document.getElementById("trackName");
+    const waveContainer = document.getElementById("waveContainer");
+    const progressBar = document.getElementById("progressBar");
+    const nextTrackBtn = document.getElementById("nextTrackBtn");
 
-  prevBtn.addEventListener('click', () => prev(true));
-  nextBtn.addEventListener('click', () => next(true));
+    // Sincronizar el nombre inicial en el display flotante
+    trackNameDisplay.textContent = tracks[currentTrackIndex].name;
 
-  // pausa el autoplay si el usuario tiene el cursor sobre la galería
-  carousel.addEventListener('mouseenter', stopAutoplay);
-  carousel.addEventListener('mouseleave', startAutoplay);
+    function playTrack() {
+        audio.play().then(() => {
+            playIcon.classList.add("hidden");
+            pauseIcon.classList.remove("hidden");
+            
+            // Si es la voz, no activamos la animación del ecualizador para mantener la sobriedad
+            if (tracks[currentTrackIndex].isVoice) {
+                waveContainer.classList.remove("playing");
+            } else {
+                waveContainer.classList.add("playing");
+            }
+        }).catch(err => console.log("Interacción requerida por políticas del browser."));
+    }
 
-  // soporte táctil (swipe) para móviles
-  let touchStartX = 0;
-  let touchDeltaX = 0;
+    function pauseTrack() {
+        audio.pause();
+        playIcon.classList.remove("hidden");
+        pauseIcon.classList.add("hidden");
+        waveContainer.classList.remove("playing");
+    }
 
-  track.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-    stopAutoplay();
-  }, { passive: true });
-
-  track.addEventListener('touchmove', (e) => {
-    touchDeltaX = e.touches[0].clientX - touchStartX;
-  }, { passive: true });
-
-  track.addEventListener('touchend', () => {
-    const SWIPE_THRESHOLD = 40;
-    if (touchDeltaX > SWIPE_THRESHOLD) prev(true);
-    else if (touchDeltaX < -SWIPE_THRESHOLD) next(true);
-    else startAutoplay();
-    touchDeltaX = 0;
-  });
-
-  render();
-  startAutoplay();
-}
-
-/* --------------------------------------------------------------------------
-   5. REPRODUCTOR DE MÚSICA FLOTANTE
-   -------------------------------------------------------------------------- */
-function initMusicPlayer() {
-  const player = document.getElementById('music-player');
-  const toggleBtn = document.getElementById('music-toggle');
-  const nextBtn = document.getElementById('music-next');
-  const progressBar = document.getElementById('music-progress');
-  const progressFill = document.getElementById('music-progress-fill');
-  const trackName = document.getElementById('music-track-name');
-  if (!player) return;
-
-  const tracks = [
-    { el: document.getElementById('audio-track-1'), label: 'Pista 1 — Nuestra melodía' },
-    { el: document.getElementById('audio-track-2'), label: 'Pista 2 — Bajo la luna dorada' },
-  ];
-
-  let current = 0;
-  let isPlaying = false;
-
-  function setTrack(i, autoplay) {
-    tracks[current].el.pause();
-    current = (i + tracks.length) % tracks.length;
-    trackName.textContent = tracks[current].label;
-    progressFill.style.width = '0%';
-    if (autoplay) play();
-  }
-
-  function play() {
-    tracks[current].el.play().then(() => {
-      isPlaying = true;
-      player.classList.add('is-playing');
-    }).catch(() => {
-      // el navegador bloqueó el autoplay: se necesitará interacción manual
-      isPlaying = false;
-      player.classList.remove('is-playing');
+    playPauseBtn.addEventListener("click", () => {
+        if (audio.paused) playTrack(); else pauseTrack();
     });
-  }
 
-  function pause() {
-    tracks[current].el.pause();
-    isPlaying = false;
-    player.classList.remove('is-playing');
-  }
-
-  toggleBtn.addEventListener('click', () => {
-    if (isPlaying) pause();
-    else play();
-  });
-
-  nextBtn.addEventListener('click', () => setTrack(current + 1, isPlaying));
-
-  // cuando termina una pista, pasa automáticamente a la siguiente sin cortes
-  tracks.forEach((t, i) => {
-    t.el.addEventListener('ended', () => setTrack(i + 1, true));
-
-    t.el.addEventListener('timeupdate', () => {
-      if (i !== current || !t.el.duration) return;
-      const pct = (t.el.currentTime / t.el.duration) * 100;
-      progressFill.style.width = `${pct}%`;
+    nextTrackBtn.addEventListener("click", () => {
+        changeTrack();
     });
-  });
 
-  // barra de progreso interactiva: clic para saltar a un punto de la canción
-  progressBar.addEventListener('click', (e) => {
-    const rect = progressBar.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / rect.width;
-    const t = tracks[current].el;
-    if (t.duration) t.currentTime = ratio * t.duration;
-  });
+    function changeTrack() {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        audio.src = tracks[currentTrackIndex].src;
+        trackNameDisplay.textContent = tracks[currentTrackIndex].name;
+        progressBar.style.width = "0%";
+        playTrack();
+    }
 
-  trackName.textContent = tracks[current].label;
+    // Encadenamiento automático: Al terminar la voz, pasa directo a la música
+    audio.addEventListener("ended", () => {
+        changeTrack();
+    });
 
-  // expone un intento de autoplay al abrir el sobre (algunos navegadores lo permiten
-  // tras la interacción de clic sobre el sobre; si lo bloquean, el usuario pulsa play)
-  window.__attemptMusicAutoplay = () => play();
-}
+    // Actualización de la barra de progreso
+    audio.addEventListener("timeupdate", () => {
+        if (audio.duration) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        }
+    });
 
-function attemptAutoplay() {
-  if (window.__attemptMusicAutoplay) window.__attemptMusicAutoplay();
-}
 
-/* --------------------------------------------------------------------------
-   6. RSVP — construye el enlace de WhatsApp con el mensaje pre-llenado
-   -------------------------------------------------------------------------- */
-function initRSVP() {
-  const link = document.getElementById('rsvp-link');
-  if (!link) return;
+    // --- CARRUSEL FOTOGRÁFICO INTERACTIVO ---
+    const slider = document.getElementById("carouselSlider");
+    const slides = document.querySelectorAll(".carousel-slide");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const dotsContainer = document.getElementById("carouselDots");
 
-  const PHONE = '51979797137'; // número genérico — reemplázalo por el real
-  const message =
-    '¡Hola! Confirmo con mucha alegría mi asistencia a las Bodas de Oro de ' +
-    'Carmen y Alberto el 1 de agosto. Mi nombre es: [Escribe tu nombre aquí] ' +
-    'y asistiré con [Número] acompañantes.';
+    let carouselIndex = 0;
+    let carouselTimer;
 
-  link.href = `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
-}
+    // Generar dots dinámicamente
+    slides.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        if (idx === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => goToSlide(idx));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll(".dot");
+
+    function updateCarousel() {
+        slider.style.transform = `translateX(-${carouselIndex * 33.3333}%)`;
+        dots.forEach(dot => dot.classList.remove("active"));
+        dots[carouselIndex].classList.add("active");
+    }
+
+    function nextSlide() {
+        carouselIndex = (carouselIndex + 1) % slides.length;
+        updateCarousel();
+    }
+
+    function prevSlide() {
+        carouselIndex = (carouselIndex - 1 + slides.length) % slides.length;
+        updateCarousel();
+    }
+
+    function goToSlide(idx) {
+        carouselIndex = idx;
+        updateCarousel();
+        resetCarouselTimer();
+    }
+
+    function resetCarouselTimer() {
+        clearInterval(carouselTimer);
+        carouselTimer = setInterval(nextSlide, 4000); // 4 Segundos estipulados
+    }
+
+    nextBtn.addEventListener("click", () => { nextSlide(); resetCarouselTimer(); });
+    prevBtn.addEventListener("click", () => { prevSlide(); resetCarouselTimer(); });
+
+    // Soporte completo de gestos Swipe para Móviles
+    let startX = 0;
+    slider.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
+    slider.addEventListener("touchend", (e) => {
+        let endX = e.changedTouches[0].clientX;
+        if (startX - endX > 50) { nextSlide(); resetCarouselTimer(); } // Swipe izquierda
+        if (endX - startX > 50) { prevSlide(); resetCarouselTimer(); } // Swipe derecha
+    });
+
+    resetCarouselTimer();
+
+    // --- EFECTO SCROLL REVEAL (INTERSECTION OBSERVER) ---
+    function initScrollReveal() {
+        const revealElements = document.querySelectorAll(".scroll-reveal");
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("revealed");
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealElements.forEach(el => observer.observe(el));
+    }
+});
