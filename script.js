@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dots = document.querySelectorAll(".dot");
 
     function updateCarousel() {
-        slider.style.transform = `translateX(-${carouselIndex * 33.3333}%)`;
+        slider.style.transform = `translateX(-${carouselIndex * 100}%)`;
         dots.forEach(dot => dot.classList.remove("active"));
         dots[carouselIndex].classList.add("active");
     }

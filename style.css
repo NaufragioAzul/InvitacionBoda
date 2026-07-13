@@ -578,34 +578,35 @@ body {
         left: -8px; /* Punto al centro izquierdo */
     }
 }
-/* --- CARRUSEL PREMIUM --- */
+/* --- CARRUSEL PREMIUM (CORREGIDO PARA N FOTOS) --- */
 .carousel-container {
     position: relative;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    max-width: 800px;
+    max-width: 500px; /* Reducido a 500px para que el formato cuadrado se vea estilizado en celulares y PC */
     width: 100%;
     margin: 0 auto;
-    aspect-ratio:1 / 1;
+    aspect-ratio: 1 / 1; /* Cuadrado perfecto */
 }
 
 .carousel-slider {
     display: flex;
-    width: 300%;
+    width: 100%; /* El contenedor mide el 100% del cuadro visual */
     height: 100%;
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .carousel-slide {
-    width: 33.3333%;
+    flex: 0 0 100%; /* ✨ Clave: Fuerza a cada foto a medir exactamente el 100% del contenedor sin encimarse */
+    width: 100%;
     height: 100%;
 }
 
 .carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Centra y recorta la imagen dinámicamente sin deformar las siluetas */
     object-position: center;
 }
 
@@ -625,7 +626,11 @@ body {
     transition: var(--transition-premium);
 }
 
-.carousel-btn:hover { background: var(--white); color: var(--gold-dark); }
+.carousel-btn:hover { 
+    background: var(--white); 
+    color: var(--gold-dark); 
+}
+
 .carousel-btn.prev { left: 15px; }
 .carousel-btn.next { right: 15px; }
 
