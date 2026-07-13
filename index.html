@@ -1,184 +1,302 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bodas de Oro — Carmen & Alberto</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Francisca &amp; Felipe — Bodas de Oro</title>
+<meta name="description" content="Invitación digital a las Bodas de Oro de Francisca y Felipe, 1 de agosto de 2026.">
+
+<!-- Tipografías: Cinzel Decorative para títulos majestuosos, Playfair Display de apoyo, Montserrat para texto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Dynalight&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <canvas id="particlesCanvas"></canvas>
+<!-- ============================================================ -->
+<!-- CAPA DE PARTÍCULAS DORADAS — vive detrás de todo el contenido -->
+<!-- ============================================================ -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
 
-    <div class="welcome-screen" id="welcomeScreen">
-        <div class="ken-burns-bg"></div>
-        <div class="envelope-container" id="envelopeContainer">
-            <p class="envelope-hint">Toca para abrir la invitación</p>
-            <div class="envelope">
-                <div class="flap"></div>
-                <div class="pocket"></div>
-                <div class="letter">
-                    <span class="gold-seal">50</span>
-                    <h2>Felipe & Fransisca</h2>
-                    <p>Nuestra Unión Eterna</p>
-                </div>
-            </div>
-        </div>
+<!-- ============================================================ -->
+<!-- 1. PANTALLA DE BIENVENIDA — PORTADA + SOBRE 3D                -->
+<!-- ============================================================ -->
+<section id="welcome-screen" aria-label="Portada de bienvenida">
+  <div class="hero-photo" id="hero-photo">
+    <img
+      src="foto-portada.jpeg"
+      alt="Pareja celebrando su historia de amor, fotografía de portada de las Bodas de Oro"
+      id="hero-img">
+    <div class="hero-photo__veil"></div>
+  </div>
+
+  <header class="welcome-heading">
+    <p class="eyebrow-gold">Bodas de Oro</p>
+    <h1 class="hero-names">Francisca <span class="amp">&amp;</span> Felipe</h1>
+    <p class="hero-years">50 años de un mismo amor</p>
+  </header>
+
+  <!-- Sobre 3D interactivo -->
+  <button type="button" id="envelope" class="envelope" aria-label="Abrir invitación">
+    <span class="envelope__glow"></span>
+    <span class="envelope__shadow"></span>
+    <span class="envelope__back"></span>
+    <span class="envelope__flap"></span>
+    <span class="envelope__body"></span>
+    <span class="envelope__seal">
+      <svg viewBox="0 0 60 60" width="34" height="34" aria-hidden="true">
+        <circle cx="30" cy="30" r="28" fill="url(#sealGrad)"/>
+        <text x="30" y="39" text-anchor="middle" font-family="'Playfair Display', serif" font-size="26" fill="#3a2405">50</text>
+        <defs>
+          <linearGradient id="sealGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fff3c4"/>
+            <stop offset="45%" stop-color="#d4af37"/>
+            <stop offset="100%" stop-color="#8a6512"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </span>
+    <span class="envelope__letter">
+      <span class="envelope__letter-line"></span>
+      <span class="envelope__letter-line"></span>
+      <span class="envelope__letter-line short"></span>
+    </span>
+  </button>
+
+  <p class="tap-hint" id="tap-hint">Toca el sobre para abrir tu invitación</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- CONTENIDO PRINCIPAL DE LA INVITACIÓN (oculto hasta abrir)     -->
+<!-- ============================================================ -->
+<main id="invitation" class="invitation" aria-hidden="true">
+
+  <!-- ---------- Fotografía a pantalla completa de apertura ---------- -->
+  <section class="full-bleed-photo reveal" aria-label="Fotografía de la pareja">
+    <img
+      src="foto-portada.jpeg"
+      alt="Francisca y Felipe celebrando su historia de amor">
+    <div class="full-bleed-photo__veil"></div>
+    <p class="full-bleed-photo__caption">Cincuenta años, un mismo camino</p>
+  </section>
+
+  <!-- ---------- Cabecera dorada ---------- -->
+  <section class="section intro-section reveal">
+    <p class="eyebrow-gold reveal">Con inmensa alegría</p>
+    <h2 class="section-title reveal">Celebramos nuestras Bodas de Oro</h2>
+    <p class="intro-copy reveal">
+      Cinco décadas tomados de la mano nos han enseñado que el amor verdadero
+      no envejece: se vuelve más dorado con los años. Nos harías muy felices
+      acompañándonos a celebrar medio siglo de historia juntos.
+    </p>
+    <div class="ornament reveal" aria-hidden="true">
+      <span></span><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.3 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg><span></span>
+    </div>
+  </section>
+
+  <!-- ---------- Bloques de información del evento ---------- -->
+  <section class="section details-section" aria-label="Detalles del evento">
+    <div class="details-grid">
+
+      <article class="detail-card reveal">
+        <span class="detail-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 8v10H5V10h14zM7 12h4v4H7v-4z"/></svg>
+        </span>
+        <h3>Fecha</h3>
+        <p>Sábado, 1 de Agosto<br>del 2026</p>
+      </article>
+
+      <article class="detail-card reveal">
+        <span class="detail-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.59V6h-2v7.41l5.29 5.3 1.42-1.42z"/></svg>
+        </span>
+        <h3>Hora</h3>
+        <p>11:00 Horas</p>
+      </article>
+
+      <article class="detail-card reveal">
+        <span class="detail-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 2 7v2h20V7zM4 11v7H2v2h20v-2h-2v-7h-2v7h-3v-7h-2v7h-3v-7H8v7H6v-7z"/></svg>
+        </span>
+        <h3>Ceremonia</h3>
+        <p>Iglesia San Pedro Nolasco</p>
+      </article>
+
+      <article class="detail-card reveal">
+        <span class="detail-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 3 7v13h6v-8h6v8h6V7zM11 4.24 18 8v10h-2v-8H8v8H6V8z"/></svg>
+        </span>
+        <h3>Recepción</h3>
+        <p>Heroes del Cenepa<br>"Mz Lt"</p>
+        <p class="detail-card__note">Un lugar listo para recibir a quienes nos han acompañado durante estos cincuenta años.</p>
+      </article>
+
     </div>
 
-    <div class="audio-player" id="audioPlayer">
-        <button class="player-btn" id="playPauseBtn" aria-label="Reproducir/Pausar">
-            <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            <svg class="icon-pause hidden" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-        </button>
-        <div class="player-info">
-            <div class="track-title" id="trackTitle">Cargando...</div>
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-        </div>
-        <button class="player-btn" id="nextBtn" aria-label="Siguiente Canción">
-            <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-        </button>
+    <a class="btn-map reveal"
+       href="https://www.google.com/maps/search/?api=1&query=Iglesia+San+Pedro+Nolasco"
+       target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5z"/></svg>
+      Cómo llegar a la ceremonia
+    </a>
+  </section>
+
+  <!-- ---------- Familia y organizadores ---------- -->
+  <section class="section family-section" aria-label="Familia y organizadores">
+    <p class="eyebrow-gold reveal">Con el cariño de toda la familia</p>
+    <h2 class="section-title reveal">Nuestra familia</h2>
+    <p class="intro-copy reveal">
+      Esta celebración no sería posible sin quienes han sido nuestro mayor
+      regalo a lo largo de estos cincuenta años.
+    </p>
+
+    <div class="family-grid">
+      <article class="family-card reveal">
+        <span class="family-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4.42 0-8 2.24-8 5v2h16v-2c0-2.76-3.58-5-8-5z"/></svg>
+        </span>
+        <h3>Nuestros hijos</h3>
+        <!-- Reemplaza estos nombres por los reales -->
+        <p>Hugo Adco, Yimi Adco, Ruiz Adco, Monica Adco, Marina Adco, Mariluz Adco &amp; Julia Adco</p>
+      </article>
+
+      <article class="family-card reveal">
+        <span class="family-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11z"/></svg>
+        </span>
+        <h3>Organizan</h3>
+        <!-- Reemplaza este texto por los organizadores reales -->
+        <p>Hugo Adco, Yimi Adco, Ruiz Adco, Monica Adco, Marina Adco, Mariluz Adco &amp; Julia Adco, con el cariño de toda la familia</p>
+      </article>
     </div>
+  </section>
 
-    <main class="main-content hidden" id="mainContent">
-        
-        <header class="hero-section">
-            <div class="gold-monogram">C & A</div>
-            <h1 class="title-gold">50 Aniversario</h1>
-            <p class="subtitle">Bodas de Oro de Nuestra Historia de Amor</p>
-            <div class="divider"></div>
-        </header>
+  <!-- ---------- Línea de tiempo ---------- -->
+  <section class="section timeline-section" aria-label="Cronología del evento">
+    <p class="eyebrow-gold reveal">Itinerario</p>
+    <h2 class="section-title reveal">Así viviremos el día</h2>
 
-        <section class="section couple-section content-reveal">
-            <h2 class="section-title">Carmen & Alberto</h2>
-            <p class="couple-text">
-                "Cincuenta años de caminar juntos, construyendo un legado de amor, paciencia y bendiciones. Hoy celebramos el oro de nuestro pasado y el brillo de nuestro futuro."
-            </p>
-        </section>
+    <ol class="timeline">
+      <li class="timeline__item reveal">
+        <span class="timeline__dot"></span>
+        <div class="timeline__content">
+          <h3>Bienvenida</h3>
+          <p>Recibimos a nuestros invitados con un brindis de honor.</p>
+        </div>
+      </li>
+      <li class="timeline__item reveal">
+        <span class="timeline__dot"></span>
+        <div class="timeline__content">
+          <h3>Ceremonia</h3>
+          <p>Renovación de votos en la Iglesia San Pedro Nolasco.</p>
+        </div>
+      </li>
+      <li class="timeline__item reveal">
+        <span class="timeline__dot"></span>
+        <div class="timeline__content">
+          <h3>Brindis</h3>
+          <p>Copa de honor bajo las luces doradas del jardín.</p>
+        </div>
+      </li>
+      <li class="timeline__item reveal">
+        <span class="timeline__dot"></span>
+        <div class="timeline__content">
+          <h3>Banquete</h3>
+          <p>Cena de gala en el Salón "Palacio Dorado".</p>
+        </div>
+      </li>
+      <li class="timeline__item reveal">
+        <span class="timeline__dot"></span>
+        <div class="timeline__content">
+          <h3>Baile</h3>
+          <p>Celebramos hasta la madrugada al ritmo de 50 años de historia.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
 
-        <section class="section details-grid">
-            <div class="card content-reveal">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-                </div>
-                <h3>Cuándo</h3>
-                <p class="highlight-gold">Sábado, 1 de Agosto del 2026</p>
-                <p>11:00 Horas</p>
-            </div>
+  <!-- ---------- Carrusel de fotografías ---------- -->
+  <section class="section gallery-section" aria-label="Galería de fotografías">
+    <p class="eyebrow-gold reveal">Nuestra historia</p>
+    <h2 class="section-title reveal">Cincuenta años en imágenes</h2>
 
-            <div class="card content-reveal">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                </div>
-                <h3>Ceremonia</h3>
-                <p class="highlight-gold">Iglesia San Pedro Nolasco</p>
-                <p>Dirección Sacra de la Celebración</p>
-            </div>
+    <div class="carousel reveal" id="carousel">
+      <div class="carousel__track" id="carousel-track">
+        <figure class="carousel__slide">
+          <img src="foto-actual.jpeg" alt="Foto Actual">
+        </figure>
+        <figure class="carousel__slide">
+          <img src="foto-familia.jpeg" alt="Foto familia">
+	</figure>
+        <figure class="carousel__slide">
+          <img src="foto-antigua.jpeg" alt="Foto antigua" >
+	</figure>
+      </div>
 
-            <div class="card content-reveal">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24"><path d="M11 2L2 9h3v13h5v-7h4v7h5V9h3L11 2z"/></svg>
-                </div>
-                <h3>Recepción</h3>
-                <p class="highlight-gold">Salón "Palacio Dorado"</p>
-                <p>Brindis, Banquete y Gala de Oro</p>
-            </div>
-        </section>
+      <button type="button" class="carousel__arrow carousel__arrow--prev" id="carousel-prev" aria-label="Foto anterior">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4L10.8 12z"/></svg>
+      </button>
+      <button type="button" class="carousel__arrow carousel__arrow--next" id="carousel-next" aria-label="Foto siguiente">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4L13.2 12z"/></svg>
+      </button>
 
-        <section class="section timeline-section">
-            <h2 class="section-title">Cronograma del Evento</h2>
-            <div class="timeline">
-                <div class="timeline-item content-reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h4>11:00 AM</h4>
-                        <h5>Bienvenida</h5>
-                        <p>Recepción de invitados distinguidos.</p>
-                    </div>
-                </div>
-                <div class="timeline-item content-reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h4>11:30 AM</h4>
-                        <h5>Ceremonia</h5>
-                        <p>Renovación solemne de votos matrimoniales.</p>
-                    </div>
-                </div>
-                <div class="timeline-item content-reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h4>01:00 PM</h4>
-                        <h5>Brindis de Oro</h5>
-                        <p>Discursos de honor y primeras copas de gala.</p>
-                    </div>
-                </div>
-                <div class="timeline-item content-reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h4>02:00 PM</h4>
-                        <h5>Banquete Real</h5>
-                        <p>Almuerzo gourmet seleccionado para la ocasión.</p>
-                    </div>
-                </div>
-                <div class="timeline-item content-reveal">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <h4>04:00 PM</h4>
-                        <h5>Baile de Gala</h5>
-                        <p>Apertura de la pista y celebración festiva.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+      <div class="carousel__dots" id="carousel-dots" role="tablist" aria-label="Selecciona una fotografía"></div>
+    </div>
+  </section>
 
-        <section class="section carousel-section content-reveal">
-            <h2 class="section-title">Nuestra Vida en Fotos</h2>
-            <div class="carousel-container" id="carouselContainer">
-                <div class="carousel-track" id="carouselTrack">
-                    <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1519225495810-7512c696505a?q=80&w=800" alt="Juventud y Amor">
-                        <div class="slide-caption">Los inicios de una hermosa promesa</div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800" alt="Años Juntos">
-                        <div class="slide-caption">Construyendo una familia paso a paso</div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1543807535-eceef0bc6599?q=80&w=800" alt="Bodas de Oro">
-                        <div class="slide-caption">50 años después, el amor sigue intacto</div>
-                    </div>
-                </div>
-                <button class="carousel-arrow prev" id="prevBtnSlider" aria-label="Anterior">&#10094;</button>
-                <button class="carousel-arrow next" id="nextBtnSlider" aria-label="Siguiente">&#10095;</button>
-                <div class="carousel-dots" id="carouselDots"></div>
-            </div>
-        </section>
+  <!-- ---------- RSVP ---------- -->
+  <section class="section rsvp-section" aria-label="Confirmación de asistencia">
+    <p class="eyebrow-gold reveal">Tu presencia es nuestro mejor regalo</p>
+    <h2 class="section-title reveal">Confirma tu asistencia</h2>
+    <p class="intro-copy reveal">Ayúdanos a preparar cada detalle contándonos si nos acompañarás en esta fecha tan especial.</p>
 
-        <section class="section action-buttons-section content-reveal">
-            <a href="https://wa.me/5491112345678?text=%C2%A1Hola%21%20Confirmo%20con%20mucha%20alegr%C3%ADa%20mi%20asistencia%20a%20las%20Bodas%20de%20Oro%20de%20Carmen%20y%20Alberto%20el%201%20de%20agosto.%20Mi%20nombre%20es%3A%20%5BEscribe%20tu%20nombre%20aqu%C3%AD%5D%20y%20asistir%C3%A9%20con%20%5BN%C3%BAmero%5D%20acompa%C3%B1antes." 
-               target="_blank" rel="noopener noreferrer" class="btn-rsvp">
-                <svg viewBox="0 0 24 24"><path fill="#FFF" d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.248 8.477 3.517 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.966C16.528 1.975 14.067.953 11.44.951c-5.438 0-9.863 4.372-9.867 9.801-.002 2.073.547 4.097 1.59 5.88l-1.045 3.816 3.93-1.026z"/></svg>
-                Confirmar Asistencia (RSVP)
-            </a>
+    <a class="btn-rsvp reveal" id="rsvp-link" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+        <path fill="currentColor" d="M16.02 2.67A13.29 13.29 0 0 0 2.7 15.94a13.16 13.16 0 0 0 1.87 6.8L2 30l7.45-2.5a13.28 13.28 0 0 0 6.57 1.68h.01a13.29 13.29 0 0 0 13.3-13.27 13.2 13.2 0 0 0-3.9-9.4 13.19 13.19 0 0 0-9.41-3.84zm0 24.3a11 11 0 0 1-5.63-1.54l-.4-.24-4.42 1.48 1.48-4.31-.26-.44a11.03 11.03 0 1 1 19.87-6.59A11.06 11.06 0 0 1 16.02 27zM22.6 19c-.36-.18-2.13-1.05-2.46-1.17-.33-.12-.57-.18-.81.18-.24.36-.93 1.17-1.14 1.4-.21.24-.42.27-.78.09-.36-.18-1.5-.55-2.86-1.76-1.06-.94-1.77-2.1-1.98-2.46-.21-.36-.02-.55.16-.73.16-.16.36-.42.54-.63.18-.21.24-.36.36-.6.12-.24.06-.45-.03-.63-.09-.18-.81-1.94-1.11-2.66-.29-.7-.59-.6-.81-.61-.21-.01-.45-.01-.69-.01-.24 0-.63.09-.96.45-.33.36-1.26 1.23-1.26 3s1.29 3.48 1.47 3.72c.18.24 2.54 3.88 6.16 5.44.86.37 1.53.59 2.05.76.86.27 1.64.24 2.26.14.69-.1 2.13-.87 2.43-1.71.3-.84.3-1.56.21-1.71-.09-.15-.33-.24-.69-.42z"/>
+      </svg>
+      Confirmar asistencia por WhatsApp
+    </a>
+  </section>
 
-            <a href="https://maps.google.com/?q=Iglesia+San+Pedro+Nolasco" target="_blank" rel="noopener noreferrer" class="btn-maps">
-                <svg viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm4 8h-3v3h-2v-3H8V8h3V5h2v3h3v2z"/></svg>
-                Ver Ubicación en Mapa
-            </a>
-        </section>
+  <footer class="footer">
+    <p class="footer__names">Francisca <span class="amp">&amp;</span> Felipe</p>
+    <p class="footer__legend">— 50 años de amor, 1958–2026 —</p>
+  </footer>
+</main>
 
-        <footer class="main-footer">
-            <p>Agradecemos su grata compañía en este día tan significativo.</p>
-            <p class="copyright">© 2026 Carmen & Alberto — Bodas de Oro</p>
-        </footer>
+<!-- ============================================================ -->
+<!-- REPRODUCTOR DE MÚSICA FLOTANTE                                -->
+<!-- ============================================================ -->
+<div class="music-player" id="music-player" aria-hidden="true">
+  <button type="button" class="music-player__toggle" id="music-toggle" aria-label="Reproducir música">
+    <span class="music-player__wave" aria-hidden="true">
+      <i></i><i></i><i></i><i></i>
+    </span>
+    <svg class="music-player__icon icon-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+    <svg class="music-player__icon icon-pause" viewBox="0 0 24 24" style="display:none"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+  </button>
 
-    </main>
+  <div class="music-player__panel">
+    <p class="music-player__track" id="music-track-name">Pista 1</p>
+    <div class="music-player__progress" id="music-progress">
+      <div class="music-player__progress-fill" id="music-progress-fill"></div>
+    </div>
+    <button type="button" class="music-player__next" id="music-next" aria-label="Siguiente canción">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+    </button>
+  </div>
 
-    <script src="script.js"></script>
+  <!--
+    Pistas de referencia (placeholders libres para demo/streaming).
+    Sustituye estas rutas por tus propios archivos .mp3 con licencia
+    de uso para bodas antes de publicar el sitio.
+  -->
+  <audio id="audio-track-1" src="musica-bodas-de-oro.mp3" preload="none"></audio>
+  <audio id="audio-track-2" src="musica-bodas-de-oro.mp3" preload="none"></audio>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

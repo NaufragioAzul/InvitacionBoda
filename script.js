@@ -1,268 +1,359 @@
+/* ==========================================================================
+   BODAS DE ORO — Carmen & Alberto
+   Vanilla JS modular. Sin dependencias externas.
+   ========================================================================== */
+
 document.addEventListener('DOMContentLoaded', () => {
-
-    // ==========================================
-    // 1. MOTOR DE PARTÍCULAS DORADAS (CANVAS HTML5)
-    // ==========================================
-    const canvas = document.getElementById('particlesCanvas');
-    const ctx = canvas.getContext('2d');
-
-    let particlesArray = [];
-    const numberOfParticles = 60;
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2.5 + 0.5;
-            this.speedX = Math.random() * 0.4 - 0.2;
-            this.speedY = Math.random() * 0.5 + 0.1; // Dirección hacia abajo sutil
-            this.alpha = Math.random() * 0.5 + 0.3;
-            this.glowDirection = Math.random() > 0.5 ? 0.01 : -0.01;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.alpha += this.glowDirection;
-
-            if (this.alpha <= 0.2 || this.alpha >= 0.8) {
-                this.glowDirection *= -1;
-            }
-            if (this.y > canvas.height) {
-                this.y = 0;
-                this.x = Math.random() * canvas.width;
-            }
-            if (this.x > canvas.width || this.x < 0) {
-                this.speedX *= -1;
-            }
-        }
-        draw() {
-            ctx.shadowBlur = 6;
-            ctx.shadowColor = '#D4AF37';
-            ctx.fillStyle = `rgba(243, 229, 171, ${this.alpha})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0; // Reset para rendimiento
-        }
-    }
-
-    function initParticles() {
-        particlesArray = [];
-        for (let i = 0; i < numberOfParticles; i++) {
-            particlesArray.push(new Particle());
-        }
-    }
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let i = 0; i < particlesArray.length; i++) {
-            particlesArray[i].update();
-            particlesArray[i].draw();
-        }
-        requestAnimationFrame(animateParticles);
-    }
-
-    initParticles();
-    animateParticles();
-
-
-    // ==========================================
-    // 2. APERTURA DE SOBRE INTERACTIVO
-    // ==========================================
-    const envelopeContainer = document.getElementById('envelopeContainer');
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const mainContent = document.getElementById('mainContent');
-
-    envelopeContainer.addEventListener('click', () => {
-        // Ejecuta secuencia tridimensional
-        envelopeContainer.classList.add('open');
-        
-        // Espera la animación física del sobre antes de revelar la invitación
-        setTimeout(() => {
-            welcomeScreen.classList.add('slide-up');
-            mainContent.classList.remove('hidden');
-            
-            // Iniciar reproducción musical controlada de forma nativa tras interacción
-            initAudioEngine();
-            // Disparar lectura de intersección para animaciones scroll
-            triggerScrollAnimations();
-        }, 1200);
-    });
-
-
-    // ==========================================
-    // 3. REPRODUCTOR AVANZADO DE MÚSICA
-    // ==========================================
-    const playlist = [
-        { title: "1. Perfect Symphony", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-        { title: "2. Endless Love", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }
-    ];
-
-    let currentTrackIndex = 0;
-    let audio = new Audio();
-    audio.src = playlist[currentTrackIndex].url;
-    audio.volume = 0.4;
-
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const trackTitle = document.getElementById('trackTitle');
-    const progressBar = document.getElementById('progressBar');
-    const progressContainer = document.getElementById('progressContainer');
-    const iconPlay = playPauseBtn.querySelector('.icon-play');
-    const iconPause = playPauseBtn.querySelector('.icon-pause');
-
-    function initAudioEngine() {
-        trackTitle.textContent = playlist[currentTrackIndex].title;
-        audio.play().catch(e => console.log("Interacción requerida previa para auto-play superada de forma interactiva."));
-        togglePlayUI(true);
-    }
-
-    function togglePlayUI(isPlaying) {
-        if (isPlaying) {
-            iconPlay.classList.add('hidden');
-            iconPause.classList.remove('hidden');
-        } else {
-            iconPlay.classList.remove('hidden');
-            iconPause.classList.add('hidden');
-        }
-    }
-
-    playPauseBtn.addEventListener('click', () => {
-        if (audio.paused) {
-            audio.play();
-            togglePlayUI(true);
-        } else {
-            audio.pause();
-            togglePlayUI(false);
-        }
-    });
-
-    nextBtn.addEventListener('click', () => {
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-        audio.src = playlist[currentTrackIndex].url;
-        trackTitle.textContent = playlist[currentTrackIndex].title;
-        audio.play();
-        togglePlayUI(true);
-    });
-
-    audio.addEventListener('timeupdate', () => {
-        const percentage = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${percentage}%`;
-    });
-
-    audio.addEventListener('ended', () => {
-        nextBtn.click(); // Salta de forma cíclica automáticamente
-    });
-
-    progressContainer.addEventListener('click', (e) => {
-        const width = progressContainer.clientWidth;
-        const clickX = e.offsetX;
-        const duration = audio.duration;
-        if(duration) {
-            audio.currentTime = (clickX / width) * duration;
-        }
-    });
-
-
-    // ==========================================
-    // 4. CARRUSEL DINÁMICO DE IMÁGENES (CON SWIPE)
-    // ==========================================
-    const track = document.getElementById('carouselTrack');
-    const slides = Array.from(track.children);
-    const prevSliderBtn = document.getElementById('prevBtnSlider');
-    const nextSliderBtn = document.getElementById('nextBtnSlider');
-    const dotsContainer = document.getElementById('carouselDots');
-    
-    let currentIndex = 0;
-    let carouselTimer;
-
-    // Inicializar puntos indicadores (Dots)
-    slides.forEach((_, idx) => {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (idx === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => updateSlider(idx));
-        dotsContainer.appendChild(dot);
-    });
-
-    const dots = Array.from(dotsContainer.children);
-
-    function updateSlider(index) {
-        if (index < 0) index = slides.length - 1;
-        if (index >= slides.length) index = 0;
-        
-        currentIndex = index;
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        
-        dots.forEach(dot => dot.classList.remove('active'));
-        dots[currentIndex].classList.add('active');
-        
-        resetCarouselTimer();
-    }
-
-    function resetCarouselTimer() {
-        clearInterval(carouselTimer);
-        carouselTimer = setInterval(() => {
-            updateSlider(currentIndex + 1);
-        }, 4000);
-    }
-
-    nextSliderBtn.addEventListener('click', () => updateSlider(currentIndex + 1));
-    prevSliderBtn.addEventListener('click', () => updateSlider(currentIndex - 1));
-
-    // Soporte Gestual para Dispositivos Móviles (Touch/Swipe)
-    let startX = 0;
-    let endX = 0;
-
-    track.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-    }, {passive: true});
-
-    track.addEventListener('touchend', (e) => {
-        endX = e.changedTouches[0].clientX;
-        handleSwipe();
-    }, {passive: true});
-
-    function handleSwipe() {
-        const threshold = 50; // Pixeles mínimos para activar el swipe
-        if (startX - endX > threshold) {
-            updateSlider(currentIndex + 1); // Izquierda a Derecha
-        } else if (endX - startX > threshold) {
-            updateSlider(currentIndex - 1); // Derecha a Izquierda
-        }
-    }
-
-    resetCarouselTimer();
-
-
-    // ==========================================
-    // 5. ANIMACIÓN CON INTERSECTION OBSERVER
-    // ==========================================
-    function triggerScrollAnimations() {
-        const targets = document.querySelectorAll('.content-reveal');
-        
-        const observerOptions = {
-            root: null,
-            threshold: 0.12, // Activa el efecto cuando el 12% del módulo es visible
-            rootMargin: "0px"
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Solo se ejecuta una vez por sesión de scroll
-                }
-            });
-        }, observerOptions);
-
-        targets.forEach(target => observer.observe(target));
-    }
+  initImageFallbacks();
+  initEnvelope();
+  initParticles();
+  initScrollReveal();
+  initCarousel();
+  initMusicPlayer();
+  initRSVP();
 });
+
+/* --------------------------------------------------------------------------
+   0. FALLBACK DE IMÁGENES
+   Si una imagen de Unsplash no carga (bloqueo de red, id caducado, etc.)
+   se reemplaza automáticamente por el placeholder definido en data-fallback.
+   -------------------------------------------------------------------------- */
+function initImageFallbacks() {
+  document.querySelectorAll('img[data-fallback]').forEach((img) => {
+    img.addEventListener('error', () => {
+      if (img.src !== img.dataset.fallback) {
+        img.src = img.dataset.fallback;
+      }
+    }, { once: true });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   1. SOBRE 3D — apertura y revelado de la invitación
+   -------------------------------------------------------------------------- */
+function initEnvelope() {
+  const envelope = document.getElementById('envelope');
+  const welcomeScreen = document.getElementById('welcome-screen');
+  const invitation = document.getElementById('invitation');
+  const musicPlayer = document.getElementById('music-player');
+  const tapHint = document.getElementById('tap-hint');
+
+  if (!envelope) return;
+
+  let opened = false;
+
+  envelope.addEventListener('click', () => {
+    if (opened) return;
+    opened = true;
+
+    envelope.classList.add('is-open');
+    tapHint.style.opacity = '0';
+
+    // 1. La solapa gira en 3D y la carta sale (definido en CSS, ~1.9s).
+    // 2. Tras ese tiempo, el sobre completo se desvanece hacia abajo.
+    setTimeout(() => {
+      welcomeScreen.classList.add('is-hidden');
+    }, 1500);
+
+    // 3. Se revela la invitación con un efecto de aparición escalonado.
+    setTimeout(() => {
+      welcomeScreen.setAttribute('aria-hidden', 'true');
+      invitation.removeAttribute('aria-hidden');
+      invitation.style.display = 'block';
+      document.body.style.overflowY = 'auto';
+
+      // arranca el reproductor y la primera tanda de revelado visible
+      musicPlayer.removeAttribute('aria-hidden');
+      revealVisibleNow();
+      attemptAutoplay();
+    }, 2450);
+  });
+
+  // Antes de abrir, evita el scroll del body para mantener el foco en el sobre.
+  document.body.style.overflowY = 'hidden';
+}
+
+/* --------------------------------------------------------------------------
+   2. PARTÍCULAS DORADAS FLOTANTES (canvas)
+   -------------------------------------------------------------------------- */
+function initParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let width, height, particles;
+  const PARTICLE_COUNT = window.innerWidth < 700 ? 38 : 70;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+
+  function makeParticle() {
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 1.8 + 0.4,
+      speedY: Math.random() * 0.35 + 0.08,
+      speedX: (Math.random() - 0.5) * 0.25,
+      alpha: Math.random() * 0.6 + 0.2,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinklePhase: Math.random() * Math.PI * 2,
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: PARTICLE_COUNT }, makeParticle);
+  }
+
+  function tick(t) {
+    ctx.clearRect(0, 0, width, height);
+    particles.forEach((p) => {
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      p.twinklePhase += p.twinkleSpeed;
+
+      if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
+      if (p.x < -10) p.x = width + 10;
+      if (p.x > width + 10) p.x = -10;
+
+      const twinkle = (Math.sin(p.twinklePhase) + 1) / 2;
+      const alpha = p.alpha * (0.4 + twinkle * 0.6);
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(232, 199, 102, ${alpha.toFixed(3)})`;
+      ctx.shadowColor = 'rgba(212, 175, 55, 0.8)';
+      ctx.shadowBlur = 4;
+      ctx.fill();
+    });
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  requestAnimationFrame(tick);
+}
+
+/* --------------------------------------------------------------------------
+   3. SCROLL REVEAL — aparición escalonada de secciones al hacer scroll
+   -------------------------------------------------------------------------- */
+let scrollObserver;
+
+function initScrollReveal() {
+  const items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
+
+  scrollObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const delay = (i % 4) * 90;
+          setTimeout(() => entry.target.classList.add('is-visible'), delay);
+          scrollObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  items.forEach((el) => scrollObserver.observe(el));
+}
+
+// Revela de inmediato lo que ya está en pantalla justo tras abrir el sobre,
+// para que la cabecera de la invitación no aparezca "vacía".
+function revealVisibleNow() {
+  document.querySelectorAll('.reveal').forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      el.classList.add('is-visible');
+    }
+  });
+}
+
+/* --------------------------------------------------------------------------
+   4. CARRUSEL DE FOTOGRAFÍAS
+   -------------------------------------------------------------------------- */
+function initCarousel() {
+  const track = document.getElementById('carousel-track');
+  const dotsWrap = document.getElementById('carousel-dots');
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  const carousel = document.getElementById('carousel');
+  if (!track) return;
+
+  const slides = Array.from(track.children);
+  let index = 0;
+  let autoplayId = null;
+  const AUTOPLAY_MS = 4000;
+
+  // construye los indicadores (dots)
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'carousel__dot';
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `Ir a la fotografía ${i + 1}`);
+    dot.addEventListener('click', () => goTo(i, true));
+    dotsWrap.appendChild(dot);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  function render() {
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+  }
+
+  function goTo(i, userTriggered) {
+    index = (i + slides.length) % slides.length;
+    render();
+    if (userTriggered) restartAutoplay();
+  }
+
+  function next(userTriggered) { goTo(index + 1, userTriggered); }
+  function prev(userTriggered) { goTo(index - 1, userTriggered); }
+
+  function startAutoplay() {
+    stopAutoplay();
+    autoplayId = setInterval(() => next(false), AUTOPLAY_MS);
+  }
+  function stopAutoplay() {
+    if (autoplayId) clearInterval(autoplayId);
+  }
+  function restartAutoplay() {
+    startAutoplay();
+  }
+
+  prevBtn.addEventListener('click', () => prev(true));
+  nextBtn.addEventListener('click', () => next(true));
+
+  // pausa el autoplay si el usuario tiene el cursor sobre la galería
+  carousel.addEventListener('mouseenter', stopAutoplay);
+  carousel.addEventListener('mouseleave', startAutoplay);
+
+  // soporte táctil (swipe) para móviles
+  let touchStartX = 0;
+  let touchDeltaX = 0;
+
+  track.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    stopAutoplay();
+  }, { passive: true });
+
+  track.addEventListener('touchmove', (e) => {
+    touchDeltaX = e.touches[0].clientX - touchStartX;
+  }, { passive: true });
+
+  track.addEventListener('touchend', () => {
+    const SWIPE_THRESHOLD = 40;
+    if (touchDeltaX > SWIPE_THRESHOLD) prev(true);
+    else if (touchDeltaX < -SWIPE_THRESHOLD) next(true);
+    else startAutoplay();
+    touchDeltaX = 0;
+  });
+
+  render();
+  startAutoplay();
+}
+
+/* --------------------------------------------------------------------------
+   5. REPRODUCTOR DE MÚSICA FLOTANTE
+   -------------------------------------------------------------------------- */
+function initMusicPlayer() {
+  const player = document.getElementById('music-player');
+  const toggleBtn = document.getElementById('music-toggle');
+  const nextBtn = document.getElementById('music-next');
+  const progressBar = document.getElementById('music-progress');
+  const progressFill = document.getElementById('music-progress-fill');
+  const trackName = document.getElementById('music-track-name');
+  if (!player) return;
+
+  const tracks = [
+    { el: document.getElementById('audio-track-1'), label: 'Pista 1 — Nuestra melodía' },
+    { el: document.getElementById('audio-track-2'), label: 'Pista 2 — Bajo la luna dorada' },
+  ];
+
+  let current = 0;
+  let isPlaying = false;
+
+  function setTrack(i, autoplay) {
+    tracks[current].el.pause();
+    current = (i + tracks.length) % tracks.length;
+    trackName.textContent = tracks[current].label;
+    progressFill.style.width = '0%';
+    if (autoplay) play();
+  }
+
+  function play() {
+    tracks[current].el.play().then(() => {
+      isPlaying = true;
+      player.classList.add('is-playing');
+    }).catch(() => {
+      // el navegador bloqueó el autoplay: se necesitará interacción manual
+      isPlaying = false;
+      player.classList.remove('is-playing');
+    });
+  }
+
+  function pause() {
+    tracks[current].el.pause();
+    isPlaying = false;
+    player.classList.remove('is-playing');
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    if (isPlaying) pause();
+    else play();
+  });
+
+  nextBtn.addEventListener('click', () => setTrack(current + 1, isPlaying));
+
+  // cuando termina una pista, pasa automáticamente a la siguiente sin cortes
+  tracks.forEach((t, i) => {
+    t.el.addEventListener('ended', () => setTrack(i + 1, true));
+
+    t.el.addEventListener('timeupdate', () => {
+      if (i !== current || !t.el.duration) return;
+      const pct = (t.el.currentTime / t.el.duration) * 100;
+      progressFill.style.width = `${pct}%`;
+    });
+  });
+
+  // barra de progreso interactiva: clic para saltar a un punto de la canción
+  progressBar.addEventListener('click', (e) => {
+    const rect = progressBar.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    const t = tracks[current].el;
+    if (t.duration) t.currentTime = ratio * t.duration;
+  });
+
+  trackName.textContent = tracks[current].label;
+
+  // expone un intento de autoplay al abrir el sobre (algunos navegadores lo permiten
+  // tras la interacción de clic sobre el sobre; si lo bloquean, el usuario pulsa play)
+  window.__attemptMusicAutoplay = () => play();
+}
+
+function attemptAutoplay() {
+  if (window.__attemptMusicAutoplay) window.__attemptMusicAutoplay();
+}
+
+/* --------------------------------------------------------------------------
+   6. RSVP — construye el enlace de WhatsApp con el mensaje pre-llenado
+   -------------------------------------------------------------------------- */
+function initRSVP() {
+  const link = document.getElementById('rsvp-link');
+  if (!link) return;
+
+  const PHONE = '51979797137'; // número genérico — reemplázalo por el real
+  const message =
+    '¡Hola! Confirmo con mucha alegría mi asistencia a las Bodas de Oro de ' +
+    'Carmen y Alberto el 1 de agosto. Mi nombre es: [Escribe tu nombre aquí] ' +
+    'y asistiré con [Número] acompañantes.';
+
+  link.href = `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
+}
