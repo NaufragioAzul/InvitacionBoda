@@ -18,11 +18,14 @@
     padding: 0;
 }
 
+/* Busca la regla del body y asegúrate de que tenga esto */
 body {
     background-color: var(--bg-cream);
     color: var(--charcoal);
     font-family: var(--font-body);
-    overflow-x: hidden;
+    overflow-x: hidden; /* ✨ Crucial: Corta cualquier desborde horizontal */
+    width: 100%;
+    position: relative;
     line-height: 1.6;
 }
 
@@ -38,10 +41,11 @@ body {
 
 /* --- CLASES REUTILIZABLES --- */
 .container {
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 20px; /* Crea un colchón de protección a los lados */
+    box-sizing: border-box;
 }
 
 .gold-text {
@@ -123,10 +127,12 @@ body {
     animation: floatInfinite 3s ease-in-out infinite;
 }
 
+/* Busca .envelope y reemplázalo por esto */
 .envelope {
     position: relative;
     width: 280px;
     height: 180px;
+    max-width: 85vw; /* ✨ Evita que el sobre sea más ancho que la pantalla del celular */
     background-color: #f4ebd0;
     border: 1px solid rgba(212,175,55,0.4);
     box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 0 20px rgba(212,175,55,0.2);
@@ -134,12 +140,10 @@ body {
     transition: transform 0.8s ease;
 }
 
+/* Modifica también los triángulos internos del sobre para que no se deformen */
 .envelope-flap {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
+    top: 0; left: 0; width: 0; height: 0;
     border-left: 140px solid transparent;
     border-right: 140px solid transparent;
     border-top: 100px solid #e6d7b3;
@@ -150,10 +154,7 @@ body {
 
 .envelope-front {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 0;
+    bottom: 0; left: 0; width: 0; height: 0;
     border-left: 140px solid transparent;
     border-right: 140px solid transparent;
     border-bottom: 100px solid #decb9e;
@@ -217,20 +218,35 @@ body {
 }
 
 /* --- REPRODUCTOR MULTIMEDIA FLOTANTE --- */
+/* Busca .audio-player y reemplázalo por esto */
 .audio-player {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.95);
+    bottom: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.96);
     border: 1px solid var(--gold-primary);
-    padding: 12px 18px;
-    border-radius: 40px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 10px 14px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     z-index: 99;
     display: flex;
     flex-direction: column;
-    width: 260px;
-    backdrop-filter: blur(5px);
+    width: 240px;
+    max-width: calc(100vw - 30px); /* ✨ Evita que el reproductor sea más ancho que la pantalla del celular */
+    backdrop-filter: blur(8px);
+    box-sizing: border-box;
+}
+
+/* Reducimos ligeramente la tipografía y componentes internos en el reproductor */
+.track-info {
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
 }
 
 .player-controls {
@@ -251,17 +267,6 @@ body {
 
 .player-btn:hover {
     transform: scale(1.1);
-}
-
-.track-info {
-    font-size: 0.8rem;
-    font-weight: 600;
-    width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    flex-direction: column;
 }
 
 .wave-container {
@@ -476,7 +481,7 @@ body {
     box-shadow: 0 10px 20px rgba(212,175,55,0.2);
 }
 
-/* --- LINEA DE TIEMPO (TIMELINE) --- */
+/* --- LÍNEA DE TIEMPO (CORREGIDA RECOMIENDA MOBILE-FIRST) --- */
 .timeline-section {
     background-color: #Fdfbf7;
 }
@@ -491,43 +496,45 @@ body {
     position: relative;
     max-width: 800px;
     margin: 50px auto 0;
+    padding: 0 10px;
 }
 
+/* La línea vertical guía se posiciona a la izquierda en celulares */
 .timeline::after {
     content: '';
     position: absolute;
     width: 2px;
     background: var(--gold-gradient);
-    top: 0; bottom: 0; left: 50%;
-    margin-left: -1px;
+    top: 0; 
+    bottom: 0; 
+    left: 20px; /* Alineada a la izquierda en celular */
 }
 
 .timeline-item {
-    padding: 10px 40px;
+    padding: 15px 10px 15px 45px; /* Espacio para no chocar con la línea izquierda */
     position: relative;
     background: transparent;
-    width: 50%;
+    width: 100%; /* Ocupa todo el ancho en móvil */
+    box-sizing: border-box;
+    text-align: left !important; /* Todo alineado a la izquierda para mejor lectura */
 }
 
+/* El puntito dorado de la línea también se mueve a la izquierda */
 .timeline-item::after {
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
-    right: -8px;
+    width: 14px;
+    height: 14px;
+    left: 13px; /* Justo encima de la línea vertical */
     background-color: var(--white);
     border: 3px solid var(--gold-primary);
-    top: 15px;
+    top: 22px;
     border-radius: 50%;
     z-index: 1;
 }
 
-.left { left: 0; text-align: right; }
-.right { left: 50%; text-align: left; }
-.right::after { left: -8px; }
-
 .timeline-content {
-    padding: 20px;
+    padding: 15px 20px;
     background: var(--white);
     position: relative;
     border-radius: 4px;
@@ -537,8 +544,40 @@ body {
 .timeline-content h4 {
     font-family: var(--font-titles);
     color: var(--gold-dark);
+    margin-bottom: 4px;
 }
 
+/* 🖥️ CAMBIO AUTOMÁTICO A DOS COLUMNAS SOLO EN PANTALLAS GRANDES (ESCRITORIO) */
+@media (min-width: 768px) {
+    .timeline::after { 
+        left: 50%; /* Regresa al centro */
+        margin-left: -1px;
+    }
+    
+    .timeline-item { 
+        width: 50%; 
+        padding: 10px 40px;
+    }
+    
+    .timeline-item.left { 
+        left: 0; 
+        text-align: right !important; 
+    }
+    
+    .timeline-item.right { 
+        left: 50%; 
+        text-align: left !important; 
+    }
+    
+    .timeline-item.left::after {
+        left: auto;
+        right: -8px; /* Punto al centro derecho */
+    }
+    
+    .timeline-item.right::after {
+        left: -8px; /* Punto al centro izquierdo */
+    }
+}
 /* --- CARRUSEL PREMIUM --- */
 .carousel-container {
     position: relative;
@@ -614,46 +653,54 @@ body {
     transform: scale(1.2);
 }
 
-/* --- SECCIÓN VIDEOS --- */
+/* --- SECCIÓN VIDEOS EN MP4 (DISEÑO ULTRA-RESPONSIVO) --- */
 .grid-videos {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .video-card {
     background: var(--white);
-    padding: 20px;
+    padding: 15px;
     border: 1px solid rgba(212,175,55,0.2);
-    border-radius: 4px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-.video-card h3 {
-    font-family: var(--font-titles);
-    margin-bottom: 2px;
-}
-
-.band-type {
-    font-size: 0.85rem;
-    color: var(--gold-dark);
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
+/* Rediseñamos el contenedor eliminando el padding-bottom problemático */
 .video-wrapper {
     position: relative;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    height: 0;
+    width: 100%;
+    /* aspect-ratio fuerza los 16:9 de forma limpia en mp4 sin colapsar el alto */
+    aspect-ratio: 16 / 9; 
     overflow: hidden;
-}
-
-.video-wrapper iframe {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
     border-radius: 4px;
+    background: #000000;
 }
 
+/* Estilo directo y elástico para la etiqueta video */
+.video-wrapper video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain; /* Ajusta el video mp4 completo dentro del marco sin cortarse */
+    display: block;
+}
+
+/* En pantallas grandes (computadora), los videos se alinean uno al lado del otro elegantemente */
+@media (min-width: 768px) {
+    .grid-videos {
+        flex-direction: row;
+    }
+    .video-card {
+        width: 50%;
+    }
+}
 /* --- CONFIRMACIÓN RSVP --- */
 .rsvp-section {
     background: linear-gradient(rgba(250, 246, 238, 0.9), rgba(250, 246, 238, 0.9)),
